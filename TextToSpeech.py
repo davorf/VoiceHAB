@@ -1,5 +1,5 @@
 import Settings, VoiceHAB
-import pyglet, os
+import pyglet, os, pyvona
 from os import path
 from requests.exceptions import HTTPError
 from gtts import gTTS
@@ -20,10 +20,17 @@ def PlayAudioFile(FileName = Settings.TemporaryAudioFileName, FilePath = Setting
     
 def TextToSpeech(Phrase):
     try:
-        TTS = gTTS(text = Phrase, lang = Settings.LanguageCode)
-
         SpeechFileFullPath = path.join(Settings.ApplicationDir, Settings.TemporaryAudioFileName)
-        TTS.save(SpeechFileFullPath)
+        
+        if Settings.TextToSpeechEngine == 'Ivona':
+            TTS = pyvona.create_voice(Settings.IvonaAccessKey, Settings.IvonaSecretKey)
+            TTS.region = 'eu-west'
+            TTS.voice_name = Settings.IvonaVoice
+            TTS.codec = 'mp3'
+            TTS.fetch_voice(Phrase, SpeechFileFullPath)
+        else:
+            TTS = gTTS(text = Phrase, lang = Settings.GoogleLanguageCode)            
+            TTS.save(SpeechFileFullPath)
 
         PlayAudioFile()
 

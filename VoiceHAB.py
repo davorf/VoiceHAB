@@ -1,7 +1,8 @@
 import Settings
+import random
+import urllib.request
 import speech_recognition as sr
 import TextToSpeech as TTS
-import urllib.request
 
 Instance = None
 def init():
@@ -11,7 +12,6 @@ def init():
 class Main():    
     def ListenForWakeUp(self):
         while True:            
-            self.ProcessMessage('Listening for wake-up...')
             with Mic as SourceWakeUp:
                 AudioWakeUp = Rec.listen(SourceWakeUp)
                 RecognizedWakeUp = ''
@@ -19,15 +19,16 @@ class Main():
                 try:
                     RecognizedWakeUp = Rec.recognize_google(AudioWakeUp)
                 except sr.UnknownValueError:
-                    self.ProcessMessage('Google Speech Recognition could not recognize spoken text')
+                    pass
                 except sr.RequestError:
                     self.ProcessMessage('Google Speech Recognition denied request for result')
 
                 if RecognizedWakeUp == Settings.WakeUpPhrase:
+                    TTSGreeting = random.choice(open(Settings.GreetingDataFile).readlines())
+                    self.ProcessMessage(TTSGreeting)
                     self.ListenForCommand()
 
     def ListenForCommand(self):
-        self.ProcessMessage('Listening for command...')
         with Mic as SourceCommand:
             AudioCommand = Rec.listen(SourceCommand)
 
@@ -36,15 +37,28 @@ class Main():
             try:
                 RecognizedCommand = Rec.recognize_google(AudioCommand)
             except sr.UnknownValueError:
-                self.ProcessMessage('Google Speech Recognition could not recognize spoken text')
+                TTSError = random.choice(open(Settings.ErrorDataFile).readlines())
+                self.ProcessMessage(TTSError)
             except sr.RequestError:
                 self.ProcessMessage('Google Speech Recognition denied request for result')
 
             if RecognizedCommand != '':
-                if (Settings.Username != '') and (Settings.Password != ''):
-                    VoiceCommandItemURL = 'http://' + Settings.Username + ':' + Settings.Password + '@' + Settings.HostName + '/CMD?' + Settings.VoiceCommandItem + '=' + '"' + RecognizedCommand + '"'
+                if (Settings.Username.strip() != '') and (Settings.Password.strip() != ''):
+                    TrimmedUserPasswordString = Settings.Username.strip() + ':' + Settings.Password.strip() + '@'
                 else:
-                    VoiceCommandItemURL = 'http://' + Settings.HostName + '/CMD?' + Settings.VoiceCommandItem + '=' + '"' + RecognizedCommand + '"'
+                    TrimmedUserPasswordString = ''
+
+                if Settings.Port.strip() != '':
+                    TrimmedHostAndPort = Settings.HostName.strip() + ':' + Settings.Port.strip()
+                else:
+                    TrimmedHostAndPort = Settings.HostName.strip()
+
+                if Settings.SSLConnection:
+                    URLPrefix = 'https://'
+                else:
+                    URLPrefix = 'http://' 
+                
+                VoiceCommandItemURL = URLPrefix + TrimmedUserPasswordString + TrimmedHostAndPort + '/CMD?' + Settings.VoiceCommandItem + '=' + '"' + RecognizedCommand + '"'
                     
                 urllib.request.urlopen(VoiceCommandItemURL).read()            
 
@@ -55,7 +69,8 @@ class Main():
             print(Message)
 
     def InitializeModules(self):
-        self.ProcessMessage('Initializing...')
+        TTSInitialization = random.choice(open(Settings.InitializationDataFile).readlines())
+        self.ProcessMessage(TTSInitialization)
         
         global Rec
         global Mic
