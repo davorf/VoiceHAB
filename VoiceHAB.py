@@ -2,7 +2,7 @@ import Settings
 import random
 import urllib.request
 import speech_recognition as sr
-import TextToSpeech as TTS
+import Messages as MSG
 
 Instance = None
 def init():
@@ -21,11 +21,11 @@ class Main():
                 except sr.UnknownValueError:
                     pass
                 except sr.RequestError:
-                    self.ProcessMessage('Google Speech Recognition denied request for result')
+                    MSG.ProcessMessage('Google Speech Recognition denied request for result')
 
                 if RecognizedWakeUp == Settings.WakeUpPhrase:
                     TTSGreeting = random.choice(open(Settings.GreetingDataFile).readlines())
-                    self.ProcessMessage(TTSGreeting)
+                    MSG.ProcessMessage(TTSGreeting)
                     self.ListenForCommand()
 
     def ListenForCommand(self):
@@ -38,9 +38,9 @@ class Main():
                 RecognizedCommand = Rec.recognize_google(AudioCommand)
             except sr.UnknownValueError:
                 TTSError = random.choice(open(Settings.ErrorDataFile).readlines())
-                self.ProcessMessage(TTSError)
+                MSG.ProcessMessage(TTSError)
             except sr.RequestError:
-                self.ProcessMessage('Google Speech Recognition denied request for result')
+                MSG.ProcessMessage('Google Speech Recognition denied request for result')
 
             if RecognizedCommand != '':
                 if (Settings.Username.strip() != '') and (Settings.Password.strip() != ''):
@@ -62,15 +62,9 @@ class Main():
                     
                 urllib.request.urlopen(VoiceCommandItemURL).read()            
 
-    def ProcessMessage(self, Message):
-        if Settings.UseTextToSpeech:
-            TTS.TextToSpeech(Message)
-        else:
-            print(Message)
-
     def InitializeModules(self):
         TTSInitialization = random.choice(open(Settings.InitializationDataFile).readlines())
-        self.ProcessMessage(TTSInitialization)
+        MSG.ProcessMessage(TTSInitialization)
         
         global Rec
         global Mic
