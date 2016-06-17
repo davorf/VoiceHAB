@@ -23,7 +23,7 @@ class Main():
                 except sr.RequestError:
                     MSG.ProcessMessage('Google Speech Recognition denied request for result')
 
-                if RecognizedWakeUp == Settings.WakeUpPhrase:
+                if RecognizedWakeUp.lower() == Settings.WakeUpPhrase.lower():
                     TTSGreeting = random.choice(open(Settings.GreetingDataFile).readlines())
                     MSG.ProcessMessage(TTSGreeting)
                     self.ListenForCommand()
@@ -43,6 +43,8 @@ class Main():
                 MSG.ProcessMessage('Google Speech Recognition denied request for result')
 
             if RecognizedCommand != '':
+                VoiceCommandItemURL = ''
+                
                 if (Settings.Username.strip() != '') and (Settings.Password.strip() != ''):
                     TrimmedUserPasswordString = Settings.Username.strip() + ':' + Settings.Password.strip() + '@'
                 else:
