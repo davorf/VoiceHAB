@@ -1,6 +1,6 @@
 import Settings
 import random
-import urllib.request
+import requests
 import speech_recognition as sr
 import Messages as MSG
 
@@ -29,40 +29,37 @@ class Main():
                     self.ListenForCommand()
 
     def ListenForCommand(self):
-        with Mic as SourceCommand:
-            AudioCommand = Rec.listen(SourceCommand)
+        AudioCommand = Rec.listen(Mic)
 
-            RecognizedCommand = ''
+        RecognizedCommand = ''
 
-            try:
-                RecognizedCommand = Rec.recognize_google(AudioCommand)
-            except sr.UnknownValueError:
-                TTSError = random.choice(open(Settings.ErrorDataFile).readlines())
-                MSG.ProcessMessage(TTSError)
-            except sr.RequestError:
-                MSG.ProcessMessage('Google Speech Recognition denied request for result')
+        try:
+            RecognizedCommand = Rec.recognize_google(AudioCommand)
+        except sr.UnknownValueError:
+            TTSError = random.choice(open(Settings.ErrorDataFile).readlines())
+            MSG.ProcessMessage(TTSError)
+        except sr.RequestError:
+            MSG.ProcessMessage('Google Speech Recognition denied request for result')
 
-            if RecognizedCommand != '':
-                VoiceCommandItemURL = ''
-                
-                if (Settings.Username.strip() != '') and (Settings.Password.strip() != ''):
-                    TrimmedUserPasswordString = Settings.Username.strip() + ':' + Settings.Password.strip() + '@'
-                else:
-                    TrimmedUserPasswordString = ''
+        if RecognizedCommand != '':
+            VoiceCommandItemURL = ''
+            
+            if Settings.Port.strip() != '':
+                TrimmedHostAndPort = Settings.HostName.strip() + ':' + Settings.Port.strip()
+            else:
+                TrimmedHostAndPort = Settings.HostName.strip()
 
-                if Settings.Port.strip() != '':
-                    TrimmedHostAndPort = Settings.HostName.strip() + ':' + Settings.Port.strip()
-                else:
-                    TrimmedHostAndPort = Settings.HostName.strip()
+            if Settings.SSLConnection:
+                URLPrefix = 'https://'
+            else:
+                URLPrefix = 'http://' 
+            
+            VoiceCommandItemURL = URLPrefix + TrimmedHostAndPort + '/CMD?' + Settings.VoiceCommandItem + '=' + '"' + RecognizedCommand + '"'
 
-                if Settings.SSLConnection:
-                    URLPrefix = 'https://'
-                else:
-                    URLPrefix = 'http://' 
-                
-                VoiceCommandItemURL = URLPrefix + TrimmedUserPasswordString + TrimmedHostAndPort + '/CMD?' + Settings.VoiceCommandItem + '=' + '"' + RecognizedCommand + '"'
-                    
-                urllib.request.urlopen(VoiceCommandItemURL).read()            
+            if (Settings.Username.strip() != '') and (Settings.Password.strip() != ''):
+                HTTPGetResult = requests.get(VoiceCommandItemURL, auth=(Settings.Username.strip(), Settings.Password.strip()))
+            else:
+                HTTPGetResult = requests.get(VoiceCommandItemURL)
 
     def InitializeModules(self):
         TTSInitialization = random.choice(open(Settings.InitializationDataFile).readlines())
@@ -72,8 +69,7 @@ class Main():
         global Mic
         
         Rec = sr.Recognizer()
-        Mic = sr.Microphone()
+        Mic = sr.Microphone()        
 
         with Mic as SourceInitialize:
-            Rec.adjust_for_ambient_noise(SourceInitialize)
-        
+            Rec.adjust_for_ambient_noise(SourceInitialize)       
