@@ -6,6 +6,7 @@ VoiceHABSettings = path.join(ApplicationDir, 'VoiceHAB.ini')
 DataDir = path.join(ApplicationDir, 'data')
 SpeechDir = path.join(DataDir, 'speech')
 InitializationDataFile = path.join(SpeechDir, 'initialization.vhb')
+FinalizationDataFile = path.join(SpeechDir, 'finalization.vhb')
 GreetingDataFile = path.join(SpeechDir, 'greeting.vhb')
 ReplyDataFile = path.join(SpeechDir, 'reply.vhb')
 ErrorDataFile = path.join(SpeechDir, 'error.vhb')
@@ -31,4 +32,10 @@ SSLConnection = Settings.getboolean('OpenHAB', 'SSLConnection')
 Username = Settings.get('OpenHAB', 'Username')
 Password = Settings.get('OpenHAB', 'Password')
 VoiceCommandItem = Settings.get('OpenHAB', 'VoiceCommandItem')
+
+UseGeneralKnowledge = Settings.getboolean('GeneralKnowledge', 'UseGeneralKnowledge')
+TriggerPhrase = Settings.get('GeneralKnowledge', 'GeneralKnowledgeTriggerPhrase')
+GeneralKnowledgeEngine = Settings.get('GeneralKnowledge', 'GeneralKnowledgeEngine')
+
+ApiAIClientAccessToken = Settings.get('ApiAI', 'ApiAIClientAccessToken')
 
