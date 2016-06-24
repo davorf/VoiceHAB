@@ -34,7 +34,7 @@ Password = Settings.get('OpenHAB', 'Password')
 VoiceCommandItem = Settings.get('OpenHAB', 'VoiceCommandItem')
 
 UseGeneralKnowledge = Settings.getboolean('GeneralKnowledge', 'UseGeneralKnowledge')
-TriggerPhrase = Settings.get('GeneralKnowledge', 'GeneralKnowledgeTriggerPhrase')
+GeneralKnowledgeTriggerPhrase = Settings.get('GeneralKnowledge', 'GeneralKnowledgeTriggerPhrase')
 GeneralKnowledgeEngine = Settings.get('GeneralKnowledge', 'GeneralKnowledgeEngine')
 
 ApiAIClientAccessToken = Settings.get('ApiAI', 'ApiAIClientAccessToken')
