@@ -11,10 +11,10 @@ def init():
 
 class Main():    
     def ListenForWakeUp(self):
+        TTSReady = random.choice(open(Settings.FinalizationDataFile).readlines())
+        MSG.ProcessMessage(TTSReady)
+        
         while True:
-            TTSReady = random.choice(open(Settings.FinalizationDataFile).readlines())
-            MSG.ProcessMessage(TTSReady)
-            
             with Mic as SourceWakeUp:
                 AudioWakeUp = Rec.listen(SourceWakeUp)
                 RecognizedWakeUp = ''
