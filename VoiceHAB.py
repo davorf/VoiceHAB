@@ -1,8 +1,9 @@
 import Settings
 import random, requests, re
 import speech_recognition as sr
-import Messages as MSG
-import OtherRequests as OTR
+import Messages as M
+import OtherRequests as OR
+import SpeechToText as STT
 
 Instance = None
 def init():
@@ -12,40 +13,23 @@ def init():
 class Main():    
     def ListenForWakeUp(self):
         TTSReady = random.choice(open(Settings.FinalizationDataFile).readlines())
-        MSG.ProcessMessage(TTSReady)
+        M.ProcessMessage(TTSReady)
         
         while True:
-            with Mic as SourceWakeUp:
-                AudioWakeUp = Rec.listen(SourceWakeUp)
-                RecognizedWakeUp = ''
-
-                try:
-                    RecognizedWakeUp = Rec.recognize_google(AudioWakeUp)
-                except sr.UnknownValueError:
-                    pass
-                except sr.RequestError:
-                    MSG.ProcessMessage('Google Speech Recognition denied request for result')
-
-                WakeUpRegExPattern = r'\b%s\b' % Settings.WakeUpPhrase
-                WakeUpRegExResult = re.search(WakeUpRegExPattern, RecognizedWakeUp, re.IGNORECASE)
-                
-                if WakeUpRegExResult:
-                    TTSGreeting = random.choice(open(Settings.GreetingDataFile).readlines())
-                    MSG.ProcessMessage(TTSGreeting)
-                    self.ListenForCommand()
+            RecognizedWakeUp = ''
+            RecognizedWakeUp = STT.SpeechToText()
+            
+            WakeUpRegExPattern = r'\b%s\b' % Settings.WakeUpPhrase
+            WakeUpRegExResult = re.search(WakeUpRegExPattern, RecognizedWakeUp, re.IGNORECASE)
+            
+            if WakeUpRegExResult:
+                TTSGreeting = random.choice(open(Settings.GreetingDataFile).readlines())
+                M.ProcessMessage(TTSGreeting)
+                self.ListenForCommand()
 
     def ListenForCommand(self):
-        AudioCommand = Rec.listen(Mic)
-
         RecognizedCommand = ''
-
-        try:
-            RecognizedCommand = Rec.recognize_google(AudioCommand)
-        except sr.UnknownValueError:
-            TTSError = random.choice(open(Settings.ErrorDataFile).readlines())
-            MSG.ProcessMessage(TTSError)
-        except sr.RequestError:
-            MSG.ProcessMessage('Google Speech Recognition denied request for result')
+        RecognizedCommand = STT.SpeechToText()
 
         if RecognizedCommand != '':
             CommandRegExPattern = r'\b%s\b' % Settings.GeneralKnowledgeTriggerPhrase
@@ -53,7 +37,7 @@ class Main():
 
             if (CommandRegExResult) and (Settings.UseGeneralKnowledge):
                 if Settings.GeneralKnowledgeEngine.lower() == 'apiai':
-                    OTR.QueryApiAI(RecognizedCommand)
+                    OR.QueryApiAI(RecognizedCommand)
             else:            
                 VoiceCommandItemURL = ''
                 
@@ -76,13 +60,13 @@ class Main():
 
     def InitializeModules(self):
         TTSInitialization = random.choice(open(Settings.InitializationDataFile).readlines())
-        MSG.ProcessMessage(TTSInitialization)
-        
-        global Rec
+        M.ProcessMessage(TTSInitialization)
+
         global Mic
+        global Rec
         
+        Mic = sr.Microphone()
         Rec = sr.Recognizer()
-        Mic = sr.Microphone()        
 
         with Mic as SourceInitialize:
-            Rec.adjust_for_ambient_noise(SourceInitialize)       
+            Rec.adjust_for_ambient_noise(SourceInitialize)
