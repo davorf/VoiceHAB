@@ -22,7 +22,7 @@ def TextToSpeech(Phrase):
     try:
         SpeechFileFullPath = path.join(Settings.ApplicationDir, Settings.TemporaryAudioFileName)
         
-        if Settings.TextToSpeechEngine == 'Ivona':
+        if Settings.TextToSpeechEngine.lower() == 'ivona':
             TTS = pyvona.create_voice(Settings.IvonaAccessKey, Settings.IvonaSecretKey)
             TTS.region = 'eu-west'
             TTS.voice_name = Settings.IvonaVoice
@@ -36,6 +36,6 @@ def TextToSpeech(Phrase):
 
         os.remove(SpeechFileFullPath)
     except HTTPError as e:
-        print('Google Text-To-Speech module might not be updated: ', e)
+        print('%s Text-To-Speech module might not be updated: ' % Settings.TextToSpeechEngine, e)
     except Exception as e:
-        print('Unknown Google Text-To-Speech module error: ', e)
+        print('Unknown %s Text-To-Speech module error: ' % Settings.TextToSpeechEngine, e)
