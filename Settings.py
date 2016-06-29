@@ -16,6 +16,9 @@ Settings = configparser.ConfigParser()
 Settings.read(VoiceHABSettings)
 
 WakeUpPhrase = Settings.get('SpeechToText', 'WakeUpPhrase')
+SpeechToTextEngine = Settings.get('SpeechToText', 'SpeechToTextEngine')
+
+BingSpeechAPIKey = Settings.get('BingSTT', 'BingSpeechAPIKey')
 
 UseTextToSpeech = Settings.getboolean('TextToSpeech', 'UseTextToSpeech')
 TextToSpeechEngine = Settings.get('TextToSpeech', 'TextToSpeechEngine')
@@ -38,4 +41,7 @@ GeneralKnowledgeTriggerPhrase = Settings.get('GeneralKnowledge', 'GeneralKnowled
 GeneralKnowledgeEngine = Settings.get('GeneralKnowledge', 'GeneralKnowledgeEngine')
 
 ApiAIClientAccessToken = Settings.get('ApiAI', 'ApiAIClientAccessToken')
+ApiAIServerAccessToken = Settings.get('ApiAI', 'ApiAIServerAccessToken')
 
+WitAIClientAccessToken = Settings.get('WitAI', 'WitAIClientAccessToken')
+WitAIServerAccessToken = Settings.get('WitAI', 'WitAIServerAccessToken')
