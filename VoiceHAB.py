@@ -64,9 +64,11 @@ class Main():
 
         global Mic
         global Rec
+        global MicThreshold
         
         Mic = sr.Microphone()
         Rec = sr.Recognizer()
 
         with Mic as SourceInitialize:
             Rec.adjust_for_ambient_noise(SourceInitialize)
+            MicThreshold = Rec.energy_threshold
