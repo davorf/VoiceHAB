@@ -4,6 +4,7 @@ import speech_recognition as sr
 import Messages as M
 import OtherRequests as OR
 import SpeechToText as STT
+import VoiceRecorder as VR
 
 Instance = None
 def init():
@@ -17,7 +18,7 @@ class Main():
         
         while True:
             RecognizedWakeUp = ''
-            RecognizedWakeUp = STT.SpeechToText()
+            RecognizedWakeUp = STT.SpeechToText(Settings.UseOfflineWakeUp)
             
             WakeUpRegExPattern = r'\b%s\b' % Settings.WakeUpPhrase
             WakeUpRegExResult = re.search(WakeUpRegExPattern, RecognizedWakeUp, re.IGNORECASE)

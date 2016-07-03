@@ -4,7 +4,7 @@ from os import path
 from requests.exceptions import HTTPError
 from gtts import gTTS
 
-def PlayAudioFile(FileName = Settings.TemporaryAudioFileName, FilePath = Settings.ApplicationDir):
+def PlayAudioFile(FileName = Settings.TemporaryAudioFileName, FilePath = Settings.SoundsDir):
     pyglet.resource.path.clear()
     pyglet.resource.path.append(FilePath)
     pyglet.resource.reindex()
@@ -20,21 +20,22 @@ def PlayAudioFile(FileName = Settings.TemporaryAudioFileName, FilePath = Setting
     
 def TextToSpeech(Phrase):
     try:
-        SpeechFileFullPath = path.join(Settings.ApplicationDir, Settings.TemporaryAudioFileName)
-        
-        if Settings.TextToSpeechEngine.lower() == 'ivona':
-            TTS = pyvona.create_voice(Settings.IvonaAccessKey, Settings.IvonaSecretKey)
-            TTS.region = 'eu-west'
-            TTS.voice_name = Settings.IvonaVoice
-            TTS.codec = 'mp3'
-            TTS.fetch_voice(Phrase, SpeechFileFullPath)
-        else:
-            TTS = gTTS(text = Phrase, lang = Settings.GoogleLanguageCode)            
-            TTS.save(SpeechFileFullPath)
+        if Phrase.strip() != '':
+            SpeechFileFullPath = path.join(Settings.SoundsDir, Settings.TemporaryAudioFileName)
+            
+            if Settings.TextToSpeechEngine.lower() == 'ivona':
+                TTS = pyvona.create_voice(Settings.IvonaAccessKey, Settings.IvonaSecretKey)
+                TTS.region = 'eu-west'
+                TTS.voice_name = Settings.IvonaVoice
+                TTS.codec = 'mp3'
+                TTS.fetch_voice(Phrase, SpeechFileFullPath)
+            else:
+                TTS = gTTS(text = Phrase, lang = Settings.GoogleLanguageCode)            
+                TTS.save(SpeechFileFullPath)
 
-        PlayAudioFile()
+            PlayAudioFile()
 
-        os.remove(SpeechFileFullPath)
+            os.remove(SpeechFileFullPath)
     except HTTPError as e:
         print('%s Text-To-Speech module might not be updated: ' % Settings.TextToSpeechEngine, e)
     except Exception as e:
