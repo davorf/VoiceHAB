@@ -66,9 +66,12 @@ class Main():
         global Mic
         global Rec
         global MicThreshold
+        global AuthenticatedUserId
         
         Mic = sr.Microphone()
         Rec = sr.Recognizer()
+
+        AuthenticatedUserId = ''
 
         with Mic as SourceInitialize:
             Rec.adjust_for_ambient_noise(SourceInitialize)

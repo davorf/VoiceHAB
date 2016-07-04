@@ -36,6 +36,8 @@ UseGeneralKnowledge = Settings.getboolean('GeneralKnowledge', 'UseGeneralKnowled
 GeneralKnowledgeTriggerPhrase = Settings.get('GeneralKnowledge', 'GeneralKnowledgeTriggerPhrase')
 GeneralKnowledgeEngine = Settings.get('GeneralKnowledge', 'GeneralKnowledgeEngine')
 
+UseVoiceVerification = Settings.getboolean('VoiceVerification', 'UseVoiceVerification')
+
 VoiceRecorderChunkSize = Settings.get('VoiceRecorder', 'VoiceRecorderChunkSize')
 VoiceRecorderRate = Settings.get('VoiceRecorder', 'VoiceRecorderRate')
 
