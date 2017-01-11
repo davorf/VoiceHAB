@@ -1,22 +1,39 @@
 import Settings, VoiceHAB
-import pyglet, os, pyvona
+import os
 from os import path
 from requests.exceptions import HTTPError
-from gtts import gTTS
+
+if Settings.UseTextToSpeech:
+    if Settings.TextToSpeechEngine.lower() == 'ivona':
+        import pyvona
+    else:
+        from gtts import gTTS
+
+    if Settings.TextToSpeechAudioEngine.lower() == 'pygame':
+        import pygame
+    else:
+        import pyglet
 
 def PlayAudioFile(FileName = Settings.TemporaryAudioFileName, FilePath = Settings.SoundsDir):
-    pyglet.resource.path.clear()
-    pyglet.resource.path.append(FilePath)
-    pyglet.resource.reindex()
-    
-    AudioFile = pyglet.resource.media(FileName, streaming = False)
-    AudioFile.play()
+    if Settings.TextToSpeechAudioEngine.lower() == 'pygame':
+        pygame.mixer.init()
+        pygame.mixer.music.load(os.path.join(FilePath, FileName))
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy() == True:
+            continue
+    else:
+        pyglet.resource.path.clear()
+        pyglet.resource.path.append(FilePath)
+        pyglet.resource.reindex()
+        
+        AudioFile = pyglet.resource.media(FileName, streaming = False)
+        AudioFile.play()
 
-    def ExitPyglet(self):
-        pyglet.app.exit()
+        def ExitPyglet(self):
+            pyglet.app.exit()
 
-    pyglet.clock.schedule_once(ExitPyglet, AudioFile.duration)
-    pyglet.app.run()
+        pyglet.clock.schedule_once(ExitPyglet, AudioFile.duration)
+        pyglet.app.run()
     
 def TextToSpeech(Phrase):
     try:

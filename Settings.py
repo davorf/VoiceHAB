@@ -24,6 +24,7 @@ UseOfflineWakeUp = Settings.getboolean('SpeechToText', 'UseOfflineWakeUp')
 
 UseTextToSpeech = Settings.getboolean('TextToSpeech', 'UseTextToSpeech')
 TextToSpeechEngine = Settings.get('TextToSpeech', 'TextToSpeechEngine')
+TextToSpeechAudioEngine = Settings.get('TextToSpeech', 'TextToSpeechAudioEngine')
 
 HostName = Settings.get('OpenHAB', 'HostName')
 Port = Settings.get('OpenHAB', 'Port')
