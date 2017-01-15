@@ -1,4 +1,5 @@
 import speech_recognition as sr
+import logging as L
 import Settings
 import VoiceHAB as VH
 import Messages as M
@@ -12,6 +13,8 @@ def SpeechToText(UseOfflineSpeechRecognition = False):
 
         try:
             if UseOfflineSpeechRecognition:
+                L.debug('Using Sphinx as offline speech recognition engine')
+                
                 RecognizedSpeech = VH.Rec.recognize_sphinx(SpeechAudio)
             else:
                 if SpeechToTextEngine == 'bing':
@@ -23,7 +26,9 @@ def SpeechToText(UseOfflineSpeechRecognition = False):
                 elif SpeechToTextEngine == 'sphinx':
                     RecognizedSpeech = VH.Rec.recognize_sphinx(SpeechAudio)
                 else:
-                    RecognizedSpeech = VH.Rec.recognize_google(SpeechAudio)                
+                    RecognizedSpeech = VH.Rec.recognize_google(SpeechAudio)
+
+                L.debug('Spoken phrase: %s' % RecognizedSpeech)                
         except sr.UnknownValueError:
             pass
         except sr.RequestError:

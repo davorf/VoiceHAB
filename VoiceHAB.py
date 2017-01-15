@@ -1,13 +1,17 @@
-import Settings
 import random, requests, re
+import logging as L
 import speech_recognition as sr
+import Settings
 import Messages as M
 import OtherRequests as OR
 import SpeechToText as STT
 import VoiceRecorder as VR
+import SoundPlayer as SP
 
 Instance = None
 def init():
+    L.debug('Initializing')
+    
     global Instance
     Instance = Main()
 
@@ -17,6 +21,8 @@ class Main():
         M.ProcessMessage(TTSReady)
         
         while True:
+            L.debug('Listening for a wake-up phrase')
+            
             RecognizedWakeUp = ''
             RecognizedWakeUp = STT.SpeechToText(Settings.UseOfflineWakeUp)
             
@@ -24,17 +30,25 @@ class Main():
             WakeUpRegExResult = re.search(WakeUpRegExPattern, RecognizedWakeUp, re.IGNORECASE)
             
             if WakeUpRegExResult:
-                TTSGreeting = random.choice(open(Settings.GreetingDataFile).readlines())
-                M.ProcessMessage(TTSGreeting)
+                if Settings.UseTextToSpeech:
+                    TTSGreeting = random.choice(open(Settings.GreetingDataFile).readlines())
+                    M.ProcessMessage(TTSGreeting)
+                else:
+                    SP.PlayAudioFile(FileName = 'StartBeep.mp3')
+                    
                 self.ListenForCommand()
 
     def ListenForCommand(self):
+        L.debug('Listening for a voice command')
+        
         RecognizedCommand = ''
         RecognizedCommand = STT.SpeechToText()
 
         if RecognizedCommand != '':
             CommandRegExPattern = r'\b%s\b' % Settings.GeneralKnowledgeTriggerPhrase
             CommandRegExResult = re.search(CommandRegExPattern, RecognizedCommand, re.IGNORECASE)
+
+            SP.PlayAudioFile(FileName = 'EndBeep.mp3')
 
             if (CommandRegExResult) and (Settings.UseGeneralKnowledge):
                 if Settings.GeneralKnowledgeEngine.lower() == 'apiai':
